@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "SUA_API_KEY",
+    apiKey: "AIzaSyBwdG257-hbASsudCdQa10v2MwFcuynqVA",
     authDomain: "broadcast-tech-challenge.firebaseapp.com",
     projectId: "broadcast-tech-challenge",
     storageBucket: "broadcast-tech-challenge.firebasestorage.app",
