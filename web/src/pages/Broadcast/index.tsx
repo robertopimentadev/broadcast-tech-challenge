@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { createMessage } from "../../services/messages";
+import {
+  createMessage,
+  subscribeMessages,
+  updateMessage,
+} from "../../services/messages";
 import { subscribeConnections } from "../../services/connections";
 import { subscribeContacts } from "../../services/contacts";
+import { deleteMessage } from "../../services/messages";
 
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -21,6 +26,14 @@ export function Broadcast() {
 
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
 
+  const [messages, setMessages] = useState<any[]>([]);
+
+  const [filter, setFilter] = useState("all");
+
+  const [editingId, setEditingId] = useState("");
+
+  const [editingContent, setEditingContent] = useState("");
+
   useEffect(() => {
     if (!user) return;
 
@@ -36,6 +49,14 @@ export function Broadcast() {
 
     return unsubscribe;
   }, [user, connectionId]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubscribe = subscribeMessages(user.uid, setMessages);
+
+    return unsubscribe;
+  }, [user]);
 
   const handleCreate = async () => {
     if (!user) return;
@@ -60,6 +81,11 @@ export function Broadcast() {
         : [...prev, contactId],
     );
   };
+
+  const filteredMessages =
+    filter === "all"
+      ? messages
+      : messages.filter((message) => message.status === filter);
 
   return (
     <div className="p-8">
@@ -117,6 +143,72 @@ export function Broadcast() {
         >
           Agendar
         </button>
+      </div>
+
+      <div>
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border p-2"
+        >
+          <option value="all">Todas</option>
+
+          <option value="scheduled">Agendadas</option>
+
+          <option value="sent">Enviadas</option>
+        </select>
+
+        <div className="mt-8">
+          <h2 className="text-xl font-bold mb-4">Mensagens</h2>
+
+          {filteredMessages.map((message) => (
+            <div key={message.id} className="border rounded p-4 mb-3">
+              {editingId === message.id ? (
+                <div className="flex gap-2">
+                  <input
+                    value={editingContent}
+                    onChange={(e) => setEditingContent(e.target.value)}
+                    className="border p-2 flex-1"
+                  />
+
+                  <button
+                    onClick={async () => {
+                      await updateMessage(message.id, editingContent);
+
+                      setEditingId("");
+                    }}
+                    className="bg-green-600 text-white px-3"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              ) : (
+                <p>{message.content}</p>
+              )}
+
+              <p>
+                Status:
+                <strong> {message.status}</strong>
+              </p>
+              <p>Agendada: {message.scheduledAt?.toDate()?.toLocaleString()}</p>
+              <button
+                onClick={() => deleteMessage(message.id)}
+                className="text-red-500"
+              >
+                Excluir
+              </button>
+              <button
+                onClick={() => {
+                  setEditingId(message.id);
+                  setEditingContent(message.content);
+                }}
+                className="text-blue-500"
+              >
+                Editar
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

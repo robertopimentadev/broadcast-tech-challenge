@@ -5,6 +5,9 @@ import {
     query,
     serverTimestamp,
     where,
+    deleteDoc,
+    doc,
+    updateDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase/config";
@@ -58,4 +61,24 @@ export const subscribeMessages = (
             }))
         );
     });
+};
+
+export const deleteMessage = async (
+    id: string
+) => {
+    await deleteDoc(
+        doc(db, "messages", id)
+    );
+};
+
+export const updateMessage = async (
+    id: string,
+    content: string
+) => {
+    await updateDoc(
+        doc(db, "messages", id),
+        {
+            content,
+        }
+    );
 };
