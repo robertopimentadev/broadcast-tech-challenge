@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { registerUser } from "../../services/auth";
 
@@ -8,13 +9,14 @@ interface FormData {
 }
 
 export function Register() {
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     try {
       await registerUser(data);
 
-      alert("Usuário criado com sucesso!");
+      navigate("/connections");
     } catch (error) {
       console.error(error);
       alert("Erro ao cadastrar");

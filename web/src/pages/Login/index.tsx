@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
 import { loginUser } from "../../services/auth";
@@ -8,13 +9,14 @@ interface FormData {
 }
 
 export function Login() {
+  const navigate = useNavigate();
   const { register, handleSubmit } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     try {
       await loginUser(data.email, data.password);
 
-      alert("Login realizado com sucesso!");
+      navigate("/connections");
     } catch (error) {
       console.error(error);
       alert("Erro ao realizar login");
