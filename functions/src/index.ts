@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 
-import {onSchedule} from "firebase-functions/v2/scheduler";
+// eslint-disable-next-line object-curly-spacing
+import { onSchedule } from "firebase-functions/v2/scheduler";
 
 admin.initializeApp();
 

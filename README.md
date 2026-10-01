@@ -89,3 +89,19 @@ type MessageStatus =
 | "scheduled"
 
 | "sent";
+
+## Cloud Functions
+
+A Cloud Function `processScheduledMessages`
+foi implementada e compilada com sucesso.
+
+O deploy não foi realizado porque
+o Firebase exige o plano Blaze para habilitar:
+
+- Cloud Functions v2
+- Cloud Build
+- Artifact Registry
+
+Para executar:
+
+firebase deploy --only functions
