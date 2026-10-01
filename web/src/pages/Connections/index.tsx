@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -78,6 +79,12 @@ export function Connections() {
             >
               Excluir
             </button>
+            <Link
+              to={`/connections/${connection.id}/contacts`}
+              className="text-blue-600"
+            >
+              Contatos
+            </Link>
           </div>
         ))}
       </div>
