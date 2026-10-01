@@ -5,6 +5,7 @@ import { Register } from "../pages/Register";
 import { Connections } from "../pages/Connections";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Contacts } from "../pages/Contacts";
+import { Broadcast } from "../pages/Broadcast";
 
 export function AppRoutes() {
   return (
@@ -25,6 +26,14 @@ export function AppRoutes() {
           element={
             <ProtectedRoute>
               <Contacts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/broadcast"
+          element={
+            <ProtectedRoute>
+              <Broadcast />
             </ProtectedRoute>
           }
         />
