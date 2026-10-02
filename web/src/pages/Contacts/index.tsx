@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
+import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+} from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import PhoneIcon from "@mui/icons-material/Phone";
 
 import {
   createContact,
@@ -9,9 +20,12 @@ import {
 } from "../../services/contacts";
 
 import { useAuth } from "../../contexts/AuthContext";
+import type { Contact } from "../../types/contact";
+import { Layout } from "../../components/Layout";
 
 export function Contacts() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const { connectionId } = useParams();
 
@@ -19,7 +33,7 @@ export function Contacts() {
 
   const [phone, setPhone] = useState("");
 
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   useEffect(() => {
     if (!user || !connectionId) return;
@@ -39,45 +53,79 @@ export function Contacts() {
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Contacts</h1>
+    <Layout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Contacts</h1>
 
-      <div className="flex gap-2 mb-6">
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Nome"
-          className="border p-2"
-        />
-
-        <input
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="Telefone"
-          className="border p-2"
-        />
-
-        <button onClick={handleCreate} className="bg-blue-600 text-white px-4">
-          Criar
-        </button>
+        <p className="text-gray-500">Gerencie os contatos da conexão.</p>
       </div>
 
-      {contacts.map((contact) => (
-        <div key={contact.id} className="border p-3 mb-2 flex justify-between">
-          <div>
-            <strong>{contact.name}</strong>
+      <div className="flex gap-3 mb-8">
+        <TextField
+          label="Nome"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          fullWidth
+        />
 
-            <div>{contact.phone}</div>
-          </div>
+        <TextField
+          label="Telefone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          fullWidth
+        />
 
-          <button
-            onClick={() => deleteContact(contact.id)}
-            className="text-red-500"
+        <Button variant="contained" onClick={handleCreate}>
+          Criar
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {contacts.map((contact) => (
+          <Card
+            key={contact.id}
+            sx={{
+              borderRadius: 3,
+              boxShadow: 3,
+            }}
           >
-            Excluir
-          </button>
-        </div>
-      ))}
-    </div>
+            <CardContent>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                }}
+              >
+                {contact.name}
+              </Typography>
+
+              <div className="flex items-center gap-2 mt-2 text-gray-600">
+                <PhoneIcon fontSize="small" />
+
+                <span>{contact.phone}</span>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <Button
+                  color="error"
+                  size="small"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => deleteContact(contact.id)}
+                >
+                  Excluir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      <Button
+        variant="outlined"
+        onClick={() => navigate("/connections")}
+        sx={{ mb: 3, mt: 5 }}
+      >
+        Voltar
+      </Button>
+    </Layout>
   );
 }
