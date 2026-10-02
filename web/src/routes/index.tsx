@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import { Home } from "../pages/Home";
 import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { Connections } from "../pages/Connections";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { Contacts } from "../pages/Contacts";
 import { Broadcast } from "../pages/Broadcast";
+import { Home } from "../pages/Home";
 
 export function AppRoutes() {
   return (
