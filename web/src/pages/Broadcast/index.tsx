@@ -1,4 +1,17 @@
 import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Chip,
+  MenuItem,
+} from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
 
 import {
   createMessage,
@@ -93,135 +106,183 @@ export function Broadcast() {
 
   return (
     <Layout>
-      <h1 className="text-2xl font-bold mb-6">Broadcast</h1>
-
-      <div className="space-y-4 max-w-lg">
-        <select
-          value={connectionId}
-          onChange={(e) => setConnectionId(e.target.value)}
-          className="border p-2 w-full"
-        >
-          <option value="">Selecione</option>
-
-          {connections.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-
-        <div className="border rounded p-4">
-          <h3 className="font-semibold mb-2">Contatos</h3>
-
-          {contacts.map((contact) => (
-            <label key={contact.id} className="flex gap-2 mb-2">
-              <input
-                type="checkbox"
-                checked={selectedContacts.includes(contact.id)}
-                onChange={() => toggleContact(contact.id)}
-              />
-
-              <span>
-                {contact.name} - {contact.phone}
-              </span>
-            </label>
-          ))}
-        </div>
-
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="border p-2 w-full"
-          placeholder="Mensagem"
-        />
-
-        <input
-          type="datetime-local"
-          value={scheduledAt}
-          onChange={(e) => setScheduledAt(e.target.value)}
-        />
-
-        <button
-          onClick={handleCreate}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Agendar
-        </button>
-      </div>
-
-      <div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="border p-2"
-        >
-          <option value="all">Todas</option>
-
-          <option value="scheduled">Agendadas</option>
-
-          <option value="sent">Enviadas</option>
-        </select>
-
-        <div className="mt-8">
-          <h2 className="text-xl font-bold mb-4">Mensagens</h2>
-
-          {filteredMessages.map((message) => (
-            <div key={message.id} className="border rounded p-4 mb-3">
-              {editingId === message.id ? (
-                <div className="flex gap-2">
+      <div className="space-y-6">
+        <Card>
+          <CardContent>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+              Nova Mensagem
+            </Typography>
+            <Typography color="text.secondary" sx={{ mb: 4 }}>
+              Crie um novo broadcast para seus contatos.
+            </Typography>
+            <TextField
+              select
+              label="Conexão"
+              value={connectionId}
+              onChange={(e) => setConnectionId(e.target.value)}
+              fullWidth
+            >
+              {connections.map((connection) => (
+                <MenuItem key={connection.id} value={connection.id}>
+                  {connection.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
+              {contacts.map((contact) => (
+                <label
+                  key={contact.id}
+                  className="border rounded-lg p-3 flex items-center gap-2 hover:bg-slate-50 cursor-pointer"
+                >
                   <input
-                    value={editingContent}
-                    onChange={(e) => setEditingContent(e.target.value)}
-                    className="border p-2 flex-1"
+                    type="checkbox"
+                    checked={selectedContacts.includes(contact.id)}
+                    onChange={() => toggleContact(contact.id)}
                   />
 
-                  <button
-                    onClick={async () => {
-                      await updateMessage(message.id, editingContent);
+                  <div>
+                    <div className="font-medium">{contact.name}</div>
 
-                      setEditingId("");
-                    }}
-                    className="bg-green-600 text-white px-3"
-                  >
-                    Salvar
-                  </button>
-                </div>
-              ) : (
-                <p>{message.content}</p>
-              )}
-
-              <p>
-                Status:
-                <strong> {message.status}</strong>
-              </p>
-              <p>
-                Agendada:{" "}
-                {message.scheduledAt?.toDate()?.toLocaleString("pt-BR")}
-              </p>
-              {message.sentAt && (
-                <p>
-                  Enviada em: {message.sentAt.toDate().toLocaleString("pt-BR")}
-                </p>
-              )}
-
-              <button
-                onClick={() => deleteMessage(message.id)}
-                className="text-red-500"
-              >
-                Excluir
-              </button>
-              <button
-                onClick={() => {
-                  setEditingId(message.id);
-                  setEditingContent(message.content);
-                }}
-                className="text-blue-500"
-              >
-                Editar
-              </button>
+                    <div className="text-sm text-gray-500">{contact.phone}</div>
+                  </div>
+                </label>
+              ))}
             </div>
-          ))}
-        </div>
+
+            <TextField
+              label="Mensagem"
+              multiline
+              minRows={4}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              fullWidth
+              sx={{ mt: 3 }}
+            />
+
+            <TextField
+              type="datetime-local"
+              value={scheduledAt}
+              onChange={(e) => setScheduledAt(e.target.value)}
+              fullWidth
+              sx={{ mt: 3 }}
+            />
+
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ mt: 3 }}
+              onClick={handleCreate}
+            >
+              Agendar Mensagem
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 600,
+                mb: 3,
+              }}
+            >
+              Mensagens
+            </Typography>
+
+            <div className="flex gap-2 mb-6">
+              <Chip
+                label="Todas"
+                color={filter === "all" ? "primary" : "default"}
+                onClick={() => setFilter("all")}
+              />
+
+              <Chip
+                label="Agendadas"
+                color={filter === "scheduled" ? "warning" : "default"}
+                onClick={() => setFilter("scheduled")}
+              />
+
+              <Chip
+                label="Enviadas"
+                color={filter === "sent" ? "success" : "default"}
+                onClick={() => setFilter("sent")}
+              />
+            </div>
+
+            <div className="grid gap-4">
+              {filteredMessages.map((message) => (
+                <Card key={message.id}>
+                  <CardContent>
+                    {editingId === message.id ? (
+                      <TextField
+                        fullWidth
+                        value={editingContent}
+                        onChange={(e) => setEditingContent(e.target.value)}
+                      />
+                    ) : (
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        {message.content}
+                      </Typography>
+                    )}
+                    <Chip
+                      className="mt-2"
+                      label={message.status === "sent" ? "Enviada" : "Agendada"}
+                      color={message.status === "sent" ? "success" : "warning"}
+                    />
+                    <p className="mt-2">
+                      👥 {message.contactIds.length} contato(s)
+                    </p>
+                    <p className="mt-2 text-gray-500">
+                      📅{" "}
+                      {message.scheduledAt?.toDate()?.toLocaleString("pt-BR")}
+                    </p>
+                    <div className="flex gap-2 mt-5">
+                      {editingId === message.id ? (
+                        <Button
+                          size="small"
+                          color="success"
+                          variant="contained"
+                          startIcon={<SaveIcon />}
+                          onClick={async () => {
+                            await updateMessage(message.id, editingContent);
+
+                            setEditingId("");
+                            setEditingContent("");
+                          }}
+                        >
+                          Salvar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          startIcon={<EditIcon />}
+                          onClick={() => {
+                            setEditingId(message.id);
+                            setEditingContent(message.content);
+                          }}
+                        >
+                          Editar
+                        </Button>
+                      )}
+
+                      <Button
+                        size="small"
+                        color="error"
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                        onClick={() => deleteMessage(message.id)}
+                      >
+                        Excluir
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </Layout>
   );
