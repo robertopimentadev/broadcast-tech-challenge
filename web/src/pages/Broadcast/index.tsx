@@ -10,11 +10,15 @@ import { subscribeContacts } from "../../services/contacts";
 import { deleteMessage } from "../../services/messages";
 
 import { useAuth } from "../../contexts/AuthContext";
+import { Layout } from "../../components/Layout";
+import type { Connection } from "../../types/connection";
+import type { Contact } from "../../types/contact";
+import type { Message } from "../../types/message";
 
 export function Broadcast() {
   const { user } = useAuth();
 
-  const [connections, setConnections] = useState<any[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
 
   const [connectionId, setConnectionId] = useState("");
 
@@ -22,11 +26,11 @@ export function Broadcast() {
 
   const [scheduledAt, setScheduledAt] = useState("");
 
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   const [selectedContacts, setSelectedContacts] = useState<string[]>([]);
 
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const [filter, setFilter] = useState("all");
 
@@ -88,7 +92,7 @@ export function Broadcast() {
       : messages.filter((message) => message.status === filter);
 
   return (
-    <div className="p-8">
+    <Layout>
       <h1 className="text-2xl font-bold mb-6">Broadcast</h1>
 
       <div className="space-y-4 max-w-lg">
@@ -190,7 +194,16 @@ export function Broadcast() {
                 Status:
                 <strong> {message.status}</strong>
               </p>
-              <p>Agendada: {message.scheduledAt?.toDate()?.toLocaleString()}</p>
+              <p>
+                Agendada:{" "}
+                {message.scheduledAt?.toDate()?.toLocaleString("pt-BR")}
+              </p>
+              {message.sentAt && (
+                <p>
+                  Enviada em: {message.sentAt.toDate().toLocaleString("pt-BR")}
+                </p>
+              )}
+
               <button
                 onClick={() => deleteMessage(message.id)}
                 className="text-red-500"
@@ -210,6 +223,6 @@ export function Broadcast() {
           ))}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

@@ -1,5 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Button,
+  Card,
+  CardContent,
+  TextField,
+  Typography,
+} from "@mui/material";
+
+import PeopleIcon from "@mui/icons-material/People";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -8,13 +18,15 @@ import {
   deleteConnection,
   subscribeConnections,
 } from "../../services/connections";
+import { Layout } from "../../components/Layout";
+import type { Connection } from "../../types/connection";
 
 export function Connections() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   const [name, setName] = useState("");
 
-  const [connections, setConnections] = useState<any[]>([]);
+  const [connections, setConnections] = useState<Connection[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -37,57 +49,62 @@ export function Connections() {
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
-      <div className="flex justify-between mb-8">
-        <h1 className="text-2xl font-bold">Connections</h1>
+    <Layout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Connections</h1>
 
-        <button
-          onClick={logout}
-          className="bg-red-500 text-white px-4 py-2 rounded"
-        >
-          Sair
-        </button>
+        <p className="text-gray-500">Gerencie suas conexões.</p>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        <input
+      <div className="flex gap-3 mb-8">
+        <TextField
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nome da conexão"
-          className="border p-2 rounded flex-1"
+          label="Nome da conexão"
+          fullWidth
         />
 
-        <button
-          onClick={handleCreate}
-          className="bg-blue-600 text-white px-4 rounded"
-        >
+        <Button variant="contained" onClick={handleCreate}>
           Criar
-        </button>
+        </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {connections.map((connection) => (
-          <div
+          <Card
             key={connection.id}
-            className="border p-3 rounded flex justify-between"
+            sx={{
+              borderRadius: 3,
+              boxShadow: 3,
+            }}
           >
-            <span>{connection.name}</span>
+            <CardContent>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {connection.name}
+              </Typography>
 
-            <button
-              onClick={() => handleDelete(connection.id)}
-              className="text-red-500"
-            >
-              Excluir
-            </button>
-            <Link
-              to={`/connections/${connection.id}/contacts`}
-              className="text-blue-600"
-            >
-              Contatos
-            </Link>
-          </div>
+              <div className="flex justify-between items-center mt-6">
+                <Link
+                  to={`/connections/${connection.id}/contacts`}
+                  className="flex items-center gap-2 text-blue-600"
+                >
+                  <PeopleIcon fontSize="small" />
+                  Contatos
+                </Link>
+
+                <Button
+                  color="error"
+                  size="small"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleDelete(connection.id)}
+                >
+                  Excluir
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
-    </div>
+    </Layout>
   );
 }
