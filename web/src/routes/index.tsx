@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import { Login } from "../pages/Login";
 import { Register } from "../pages/Register";
 import { Connections } from "../pages/Connections";
 import { ProtectedRoute } from "./ProtectedRoute";
@@ -13,7 +12,6 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
           path="/connections"
