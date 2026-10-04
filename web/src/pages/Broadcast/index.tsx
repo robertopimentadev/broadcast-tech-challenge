@@ -159,22 +159,24 @@ export function Broadcast() {
               sx={{ mt: 3 }}
             />
 
-            <TextField
-              type="datetime-local"
-              value={scheduledAt}
-              onChange={(e) => setScheduledAt(e.target.value)}
-              fullWidth
-              sx={{ mt: 3 }}
-            />
+            <div className="flex items-center gap-4 mt-3">
+              <TextField
+                label="Agendar para"
+                type="datetime-local"
+                value={scheduledAt}
+                onChange={(e) => setScheduledAt(e.target.value)}
+                sx={{ width: 280 }}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+              />
 
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ mt: 3 }}
-              onClick={handleCreate}
-            >
-              Agendar Mensagem
-            </Button>
+              <Button variant="contained" size="large" onClick={handleCreate}>
+                Agendar Mensagem
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
